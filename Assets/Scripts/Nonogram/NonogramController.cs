@@ -3,12 +3,15 @@ using UnityEngine.UI;
 
 public class NonogramController : MonoBehaviour
 {
+    [Header("Nonogram Info")]
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private GridLayoutGroup grid;
     [SerializeField] private RectTransform gridRectTransform;
-    [SerializeField] private TipsController infoTipsController;
-
     private Picture _picture;
+
+    [Header("Controllers")]
+    [SerializeField] private TipsController infoTipsController;
+    [SerializeField] private LivesController livesController;
 
     private void Start()
     {
@@ -42,6 +45,7 @@ public class NonogramController : MonoBehaviour
                 cell.isFilled = picture.GetPictureFrame(row, column);
                 cell.row = row;
                 cell.column = column;
+                cell.OnClickedIncorrectly += livesController.TakeDamage;
             }
         }
     }

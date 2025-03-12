@@ -1,19 +1,19 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Cell : MonoBehaviour
 {
-    [SerializeField] private Image image;
-    public bool isFilled;
-    private bool isClicked;
-
+    public event Action OnClickedIncorrectly;
     public int row;
     public int column;
+    public bool isFilled;
 
-    public bool CheckIsFilled()
-    {
-        return isFilled;
-    }
+    [SerializeField] private Image image;
+    private bool isClicked;
+    private Color blueColor = new Color(51f / 255f, 71f / 255f, 96f / 255f);
+    private Color redColor = new Color(255f / 255f, 43f / 255f, 55f / 255f);
+
     public bool CheckIsClicked()
     {
         return isClicked;
@@ -25,11 +25,12 @@ public class Cell : MonoBehaviour
         {
             if (isFilled)
             {
-                ChangeColor(Color.blue);
+                ChangeColor(blueColor);
             }
             else
             {
-                ChangeColor(Color.red);
+                ChangeColor(redColor);
+                OnClickedIncorrectly?.Invoke();
             }
 
             isClicked = true;
