@@ -8,6 +8,7 @@ public class NonogramController : MonoBehaviour
     [SerializeField] private GridLayoutGroup grid;
     [SerializeField] private RectTransform gridRectTransform;
     private Picture _picture;
+    private int clickedCells;
 
     [Header("Controllers")]
     [SerializeField] private TipsController infoTipsController;
@@ -15,20 +16,28 @@ public class NonogramController : MonoBehaviour
 
     private void Start()
     {
-        var picture = new Picture(new bool[,]
-        {
-            { true, false, true, false, true },
-            { true, true, true, true, true },
-            { false, true, true, true, false },
-            { false, true, false, true, false },
-            { false, true, true, true, false }
-        });
-        _picture = picture;
+        _picture = LoadLevelData();
+        clickedCells = 0;
 
         CreateField(_picture);
         infoTipsController.CreateTips(_picture);
     }
 
+    private Picture LoadLevelData()
+    {
+        var levelData = GameManager.Instance.currentLevelData;
+        bool[,] field = new bool[levelData.gridSize, levelData.gridSize];
+
+        for (int i = 0; i < levelData.gridSize; i++)
+        {
+            for (int j = 0; j < levelData.gridSize; j++)
+            {
+                field[i, j] = levelData.gridData[i * levelData.gridSize + j];
+            }
+        }
+
+        return new Picture(field);
+    }
 
     private void CreateField(Picture picture)
     {
@@ -45,6 +54,7 @@ public class NonogramController : MonoBehaviour
                 cell.isFilled = picture.GetPictureFrame(row, column);
                 cell.row = row;
                 cell.column = column;
+                cell.OnClicked += CheckProgress;
                 cell.OnClickedIncorrectly += livesController.TakeDamage;
             }
         }
@@ -53,5 +63,15 @@ public class NonogramController : MonoBehaviour
     public Picture GetPicture()
     {
         return _picture;
+    }
+
+    private void CheckProgress()
+    {
+        clickedCells++;
+
+        if (clickedCells == Mathf.Pow(_picture.GetPictureSize(), 2))
+        {
+            Debug.Log("Уровень пройден");
+        }
     }
 }

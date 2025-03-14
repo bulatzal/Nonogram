@@ -4,7 +4,9 @@ using UnityEngine.UI;
 
 public class Cell : MonoBehaviour
 {
+    public event Action OnClicked;
     public event Action OnClickedIncorrectly;
+
     public int row;
     public int column;
     public bool isFilled;
@@ -30,10 +32,15 @@ public class Cell : MonoBehaviour
             else
             {
                 ChangeColor(redColor);
+            }
+
+            if ((ModeSwitcher.IsExcludeModeActive && isFilled) || (!ModeSwitcher.IsExcludeModeActive && !isFilled))
+            {
                 OnClickedIncorrectly?.Invoke();
             }
 
             isClicked = true;
+            OnClicked?.Invoke();
         }
     }
 
